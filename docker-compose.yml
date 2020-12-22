@@ -1,0 +1,39 @@
+version: "3.4"
+
+services:
+  nodejs-server:
+    container_name: nodejs-server
+    image: node-es6:latest
+    depends_on:
+      - mongoDB
+    networks:
+      - app-network
+    build:
+      context: ./nodejs
+      target: debug
+    volumes:
+      - ./nodejs/:/work/
+    restart: always
+    ports:
+      - 5000:5000
+      - 9229:9229
+
+  mongoDB:
+    container_name: mongoDB
+    hostname: mongoDB
+    networks:
+      - app-network
+    image: mongo:4
+    restart: always
+    ports:
+      - "27017:27017"
+    # environment:
+    #   - MONGO_INITDB_DATABASE=pastime
+    #   - MONGO_INITDB_ROOT_USERNAME=root
+    #   - MONGO_INITDB_ROOT_PASSWORD=root_password
+    volumes:
+      - ../mongodata:/data/db
+
+networks:
+  app-network:
+    driver: bridge
